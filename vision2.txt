@@ -1,0 +1,277 @@
+# استدعاء المكتبات #
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# استدعاء الصوره #
+img = cv2.imread('ci.jpg')
+
+# رسم مستطيل ع الصوره بتديله الصوره الي هيرسم عليها والاحداثيات و لون الخط وسمكه #
+# Line او arrow وممكن ترسم خط او سهم بأن تغير اسم المستطيل بس وتخليه #
+img = cv2.rectangle(img, (150, 0), (180, 128), (0, 0, 255), 3)
+
+# كود تقليل النويز 3 دي اعلي درجه تقليل #
+noisereduced_version = cv2.medianBlur(img, 3)
+
+# بيتديله الصوره والقيم الي هيا الماكس و الميني الي هيشتغل عليها / / / تحديد الحواف #
+edges = cv2.Canny (img, 100, 200)
+
+# دي طرقه عشان تحسب اكبر واصغر قيمه تقدر تشتغل عليهم ل اي صوره بس اعتقد مش هتيجي #
+median_val = np.median(img) # Compute median of pixel intensities
+lower_threshold = int(max(0, 0.66 * median_val))
+upper_threshold = int(min(255, 1.33 * median_val))
+
+#######################################تحديد الخطوط وغالبا جاي ########################
+
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+edges = cv2.Canny(gray, 100, 170)
+for line in lines:
+
+	rho, theta = line[0]
+	a = np.cos(theta)
+	b = np.sin(theta)
+	x0 = a * rho
+	y0 = b * rho
+	x1 = int(x0 + 1000 * (-b))
+	y1 = int(y0 + 1000 * (a))
+	x2 = int(x0 - 1000 * (-b))
+	y2 = int(y0 - 1000 * (a))
+	cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
+
+plt.imshow(image)
+
+
+................................................................
+
+####  Write a Python program to perform image segmentation on pic3.png using OpenCV's cv2.Canny() and cv2.findContours() functions.  Finally, draw the detected contours on the original image.
+
+- Use cv2.Canny() to extract the edges and cv2.findContours() to find the contours of the figures in the image.
+
+
+image = cv2.imread(r'D:\Code\Computer Vision\Quiz - Copy\pic2.png')
+gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+
+edged = cv2.Canny(gray, 168, 255)
+contours, hierarchy = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+cv2.drawContours(image, contours, -1, (0, 255, 0), 5)
+plt.imshow(image)
+print ("Number of contours found = ", len(contours))
+ 
+
+
+...........................................................................................................
+
+### Write a Python program to perform template matching on an image of a dog. Use the given coordinates (750, 200, 1700, 1200) to crop the dog's face and use it as a template. Then, find and highlight matching areas in the original image using OpenCV's cv2.matchTemplate() and cv2.minMaxLoc() functions.
+
+
+
+
+
+# Read the image
+image = cv2.imread(r"D:\Code\Computer Vision\Quiz - Copy\pic5.jpg")
+
+# Define the coordinates of the top left and bottom right corners of the crop
+x1, y1, x2, y2 = 750, 200, 1700, 1200
+
+# Crop the image to get the template (dog's face)
+cropped_img = image[y1:y2, x1:x2]
+
+# Convert the original image and template to grayscale
+image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Read the template in grayscale format
+template_gray = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2GRAY)
+
+# Get dimensions of the template
+w, h = template_gray.shape[::-1]
+
+# Perform template matching
+result = cv2.matchTemplate(image_gray, template_gray, cv2.TM_CCOEFF_NORMED)
+
+# Find the best match location
+min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+# Get coordinates for the matching region
+match_x1, match_y1 = max_loc
+match_x2, match_y2 = (match_x1 + w, match_y1 + h)
+
+# Draw a rectangle around the matched region
+cv2.rectangle(image, (match_x1, match_y1), (match_x2, match_y2), (0, 0, 255), 5)
+
+# Display the matched result with a rectangle
+plt.figure(figsize=(10, 10))
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title('Matched Result')
+plt.axis('off')
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Read the image
+filename = 'Images/chess.jpg'  
+img = cv2.imread(filename)
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Convert to float32
+gray = np.float32(gray)
+
+# Apply the Harris corner detection
+dst = cv2.cornerHarris(gray, 2, 3, 0.04)
+
+# Dilate the result to mark the corners (optional for visualization)
+dst = cv2.dilate(dst, None)
+
+# Highlight the corners on the image
+img[dst > 0.01 * dst.max()] = [0, 0, 255]
+# Convert the image to RGB for displaying with plt
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+plt.figure(figsize=(10, 8))
+plt.imshow(img_rgb)
+plt.title("Detected Corners")
+plt.axis('off') 
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+img = cv2.imread('building.jpg')
+
+# convert the input image into grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# modify the data type setting to 32-bit floating point
+gray = np.float32(gray)
+
+# apply the cv2.cornerHarris method to detect the corners
+corners = cv2.cornerHarris(gray, 2, 3, 0.05)
+
+#result is dilated for marking the corners
+corners = cv2.dilate(corners, None)
+
+# Threshold for an optimal value.
+img[corners > 0.01 * corners.max()]=[0, 0, 255]
+
+# Convert the image to RGB for displaying with plt
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+# Display the image using Matplotlib
+plt.figure(figsize=(10, 8))
+plt.imshow(img)
+plt.title("Detected Corners")
+plt.axis('off')  
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Read the image
+filename = 'Eiffel.jpg'  # Update the path as per your image location
+image = cv2.imread(filename)
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Create SIFT Feature Detector object
+sift = cv2.SIFT_create()
+
+# Detect keypoints
+keypoints = sift.detect(gray, None)
+print("Number of keypoints detected: ", len(keypoints))
+
+# Draw rich keypoints on the input image
+image_with_keypoints = cv2.drawKeypoints(image, keypoints,None)
+
+# Convert the image to RGB for displaying with Matplotlib
+image_rgb = cv2.cvtColor(image_with_keypoints, cv2.COLOR_BGR2RGB)
+
+# Display the image using Matplotlib
+plt.figure(figsize=(10, 8))
+plt.imshow(image_rgb)
+plt.title("SIFT Feature Detection")
+plt.axis('off')  # Hide axes for better visualization
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+ Read the image
+filename = 'Eiffel2.jpg'  
+image = cv2.imread(filename)
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Create SIFT Feature Detector object
+sift = cv2.SIFT_create()
+
+# Detect keypoints
+keypoints = sift.detect(gray, None)
+print("Number of keypoints detected: ", len(keypoints))
+
+# Draw rich keypoints on the input image
+image_with_keypoints = cv2.drawKeypoints(
+    image, keypoints, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS
+)
+
+# Convert the image to RGB for displaying with Matplotlib
+image_rgb = cv2.cvtColor(image_with_keypoints, cv2.COLOR_BGR2RGB)
+
+plt.figure(figsize=(10, 8))
+plt.imshow(image_rgb)
+plt.title("SIFT Feature Detection")
+plt.axis('off')  
+plt.show()
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Load the image in grayscale
+image = cv2.imread('Images/chess.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Initialize the FAST detector
+fast = cv2.FastFeatureDetector_create()
+
+# Detect keypoints
+keypoints = fast.detect(image, None)
+
+# Draw keypoints on the original image
+# Convert the grayscale image to BGR before drawing colored keypoints
+image_bgr = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+output_image = cv2.drawKeypoints(image_bgr, keypoints, None, color=(255, 0, 0))
+
+# Convert BGR image to RGB for displaying with matplotlib
+output_image_rgb = cv2.cvtColor(output_image, cv2.COLOR_BGR2RGB)
+
+# Display the result
+plt.figure(figsize=(10, 8))
+plt.imshow(output_image_rgb)
+plt.title("FAST Feature Detection")
+plt.axis('off')
+plt.show()
+
+
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+cv2.imwrite('outputs/image_result.jpg', image)
+
+
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+######################## الجزء الخاص بعرض صورتين سوا
+plt.figure(figsize=(10, 10))
+plt.subplot(1, 2, 1)
+plt.title('Original Image')
+plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+
+
+plt.subplot(1, 2, 2)
+plt.title('Noise Reduced Image')
+plt.imshow(cv2.cvtColor(noisereduced_version, cv2.COLOR_BGR2RGB))
+plt.axis('off')
+plt.show()
+
+# عرض االصور ه
+plt.imshow(edges)
