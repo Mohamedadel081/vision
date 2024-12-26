@@ -1,0 +1,130 @@
+# استدعاء المكتبات #
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# استدعاء الصوره #
+img = cv2.imread('ci.jpg')
+
+# رسم مستطيل ع الصوره بتديله الصوره الي هيرسم عليها والاحداثيات و لون الخط وسمكه #
+# Line او arrow وممكن ترسم خط او سهم بأن تغير اسم المستطيل بس وتخليه #
+img = cv2.rectangle(img, (150, 0), (180, 128), (0, 0, 255), 3)
+
+# كود تقليل النويز 3 دي اعلي درجه تقليل #
+noisereduced_version = cv2.medianBlur(img, 3)
+
+# بيتديله الصوره والقيم الي هيا الماكس و الميني الي هيشتغل عليها / / / تحديد الحواف #
+edges = cv2.Canny (img, 100, 200)
+
+# دي طرقه عشان تحسب اكبر واصغر قيمه تقدر تشتغل عليهم ل اي صوره بس اعتقد مش هتيجي #
+median_val = np.median(img) # Compute median of pixel intensities
+lower_threshold = int(max(0, 0.66 * median_val))
+upper_threshold = int(min(255, 1.33 * median_val))
+
+#######################################تحديد الخطوط وغالبا جاي ########################
+
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+edges = cv2.Canny(gray, 100, 170)
+for line in lines:
+
+	rho, theta = line[0]
+	a = np.cos(theta)
+	b = np.sin(theta)
+	x0 = a * rho
+	y0 = b * rho
+	x1 = int(x0 + 1000 * (-b))
+	y1 = int(y0 + 1000 * (a))
+	x2 = int(x0 - 1000 * (-b))
+	y2 = int(y0 - 1000 * (a))
+	cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
+
+plt.imshow(image)
+
+
+................................................................
+
+####  Write a Python program to perform image segmentation on pic3.png using OpenCV's cv2.Canny() and cv2.findContours() functions.  Finally, draw the detected contours on the original image.
+
+- Use cv2.Canny() to extract the edges and cv2.findContours() to find the contours of the figures in the image.
+
+
+image = cv2.imread(r'D:\Code\Computer Vision\Quiz - Copy\pic2.png')
+gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+
+edged = cv2.Canny(gray, 168, 255)
+contours, hierarchy = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+cv2.drawContours(image, contours, -1, (0, 255, 0), 5)
+plt.imshow(image)
+print ("Number of contours found = ", len(contours))
+ 
+
+
+...........................................................................................................
+
+### Write a Python program to perform template matching on an image of a dog. Use the given coordinates (750, 200, 1700, 1200) to crop the dog's face and use it as a template. Then, find and highlight matching areas in the original image using OpenCV's cv2.matchTemplate() and cv2.minMaxLoc() functions.
+
+
+
+
+
+# Read the image
+image = cv2.imread(r"D:\Code\Computer Vision\Quiz - Copy\pic5.jpg")
+
+# Define the coordinates of the top left and bottom right corners of the crop
+x1, y1, x2, y2 = 750, 200, 1700, 1200
+
+# Crop the image to get the template (dog's face)
+cropped_img = image[y1:y2, x1:x2]
+
+# Convert the original image and template to grayscale
+image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Read the template in grayscale format
+template_gray = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2GRAY)
+
+# Get dimensions of the template
+w, h = template_gray.shape[::-1]
+
+# Perform template matching
+result = cv2.matchTemplate(image_gray, template_gray, cv2.TM_CCOEFF_NORMED)
+
+# Find the best match location
+min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+# Get coordinates for the matching region
+match_x1, match_y1 = max_loc
+match_x2, match_y2 = (match_x1 + w, match_y1 + h)
+
+# Draw a rectangle around the matched region
+cv2.rectangle(image, (match_x1, match_y1), (match_x2, match_y2), (0, 0, 255), 5)
+
+# Display the matched result with a rectangle
+plt.figure(figsize=(10, 10))
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title('Matched Result')
+plt.axis('off')
+plt.show()
+
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+cv2.imwrite('outputs/image_result.jpg', image)
+
+
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+######################## الجزء الخاص بعرض صورتين سوا
+plt.figure(figsize=(10, 10))
+plt.subplot(1, 2, 1)
+plt.title('Original Image')
+plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+
+
+plt.subplot(1, 2, 2)
+plt.title('Noise Reduced Image')
+plt.imshow(cv2.cvtColor(noisereduced_version, cv2.COLOR_BGR2RGB))
+plt.axis('off')
+plt.show()
+
+# عرض االصور ه
+plt.imshow(edges)
